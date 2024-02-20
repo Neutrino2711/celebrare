@@ -18,13 +18,15 @@ class CustomColorButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        appdataProvider.set_font_color(customColor);
+        appdataProvider.set_font_color(customColor,0);
         appdataProvider.addTask(
-            appdataProvider.get_text,
-            appdataProvider.get_font_family,
-            appdataProvider.get_font_color,
-            appdataProvider.get_font_size,
-            appdataProvider.get_position);
+            appdataProvider.getText(0),
+            appdataProvider.getFontFamily(0),
+            appdataProvider.getFontColor(0),
+            appdataProvider.getFontSize(0),
+            appdataProvider.get_position(0),
+            appdataProvider.getIdx,
+            );
         Navigator.pop(context);
       },
       child: Text(text),

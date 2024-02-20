@@ -21,11 +21,12 @@ class IncDecButton extends StatelessWidget {
       onPressed: () {
         op!();
         appdataprovider.addTask(
-            appdataprovider.get_text,
-            appdataprovider.get_font_family,
-            appdataprovider.get_font_color,
-            appdataprovider.get_font_size,
-            appdataprovider.get_position);
+            appdataprovider.getText(0),
+            appdataprovider.getFontFamily(0),
+            appdataprovider.getFontColor(0),
+            appdataprovider.getFontSize(0),
+            appdataprovider.get_position(0),
+            appdataprovider.getIdx,);
       },
     );
   }

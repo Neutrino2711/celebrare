@@ -14,7 +14,7 @@ class NumIncDec extends StatelessWidget {
         child: Row(
           children: [
             Text(
-              appdataprovider.get_font_size.toString(),
+              appdataprovider.getFontSize(0).toString(),
               style:
                   TextStyle(fontSize: MediaQuery.of(context).size.width * 0.1),
             ),
