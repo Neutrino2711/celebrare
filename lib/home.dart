@@ -1,5 +1,5 @@
 import 'dart:ffi';
-
+import 'dart:math';
 import 'package:flutter/material.dart';
 
 import 'drag.dart';
@@ -9,6 +9,8 @@ import 'color_palette.dart';
 import 'package:provider/provider.dart';
 import '../providers/appdata_provider.dart';
 import 'providers/operation.dart';
+import '../providers/textstate.dart';
+
 
 class Celebrare extends StatelessWidget {
   Celebrare({super.key});
@@ -32,6 +34,7 @@ class Celebrare extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    BoxConstraints constraints;
 
     String dropdownVal = fontSizes.first.toString();
     final appdataProvider = Provider.of<AppDataProvider>(context);
@@ -194,23 +197,26 @@ class Celebrare extends StatelessWidget {
               ),
             ),
           ),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //   children: [
-              // ElevatedButton(
-              //   onPressed: () {
-              //     appdataProvider.add_text(textcontroller.text,0);
-              //     appdataProvider.addTask(
-              //          appdataProvider.getText(appdataProvider.getIdx),
-              //           appdataProvider.getFontFamily(appdataProvider.getIdx),
-              //           appdataProvider.getFontColor(appdataProvider.getIdx),
-              //           appdataProvider.getFontSize(appdataProvider.getIdx),
-              //           appdataProvider.get_position(appdataProvider.getIdx),
-              //         appdataProvider.getIdx,
-              //         );
-              //   },
-              //   child: const Text('Add Text'),
-              // ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  appdataProvider.addTextModel(TextModel(fontSize: 30, fontFamily: 'Roboto', fontColor: Colors.grey, position: Offset(Random().nextInt(200 - 100).toDouble(),100), content: "NewText", pageNumber: 0, isSelected: true));
+                  appdataProvider.addNewTextWidget(appdataProvider.getTextList.last.position,appdataProvider.getTextList.length -1 );
+                  print(appdataProvider.getTextList.length -1);
+                  // appdataProvider.add_text(textcontroller.text,0);
+                  // appdataProvider.addTask(
+                  //      appdataProvider.getText(appdataProvider.getIdx),
+                  //       appdataProvider.getFontFamily(appdataProvider.getIdx),
+                  //       appdataProvider.getFontColor(appdataProvider.getIdx),
+                  //       appdataProvider.getFontSize(appdataProvider.getIdx),
+                  //       appdataProvider.get_position(appdataProvider.getIdx),
+                  //     appdataProvider.getIdx,
+                  //     );
+                },
+                child: const Text('L Add Text'),
+              ),
               ElevatedButton(
                 onPressed: () {
                   appdataProvider.replace_text(textcontroller.text);
@@ -225,8 +231,8 @@ class Celebrare extends StatelessWidget {
                 },
                 child: const Text('Add Text'),
               ),
-          //   ],
-          // )
+            ],
+          )
         ],
       ),
     );

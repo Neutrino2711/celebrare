@@ -1,11 +1,38 @@
 import 'package:flutter/material.dart';
 
 import '../providers/operation.dart';
+import '../providers/textstate.dart';
 
 class AppDataProvider extends ChangeNotifier {
   final TaskStateHistory history = TaskStateHistory();
 
  
+
+
+  List<Widget> stackWidgets= [ Positioned.fill(
+            child: Image.asset(
+              'assets/background.jpg', 
+              fit: BoxFit.cover,
+            ),
+          ),];
+
+  BoxConstraints? constraints;
+  
+
+//   final List<TextModel> text = List<TextModel>.generate(
+//   6,
+//   (index) => TextModel(
+//     fontSize: 30,
+//     fontFamily: 'Roboto',
+//     fontColor: Colors.grey,
+//     position: Offset(index * 10.0, index * 20.0),
+//     content: 'Text $index',
+//     pageNumber: index,
+//     isSelected: false,
+//   ),
+// );
+final List<TextModel> text = [];
+
   List<int> font_sizes = [30,30,30,30,30,30];
  
   List<String> font_families = ["Roboto","Roboto","Roboto","Roboto","Roboto","Roboto"];
@@ -38,6 +65,7 @@ class AppDataProvider extends ChangeNotifier {
 
 
   int get getIdx => selectedIndx;
+  List<TextModel> get getTextList => text;
   
   
   
@@ -73,6 +101,8 @@ Offset get_position(int index) {
 return positions[index];
   
   }
+
+
 
   void inc_font_size() {
     font_sizes[0]++;
@@ -167,5 +197,84 @@ return positions[index];
       notifyListeners();
     }
     return redoneState;
+  }
+
+
+  void addTextModel(TextModel textModel) {
+  text.add(textModel);
+  notifyListeners();
+}
+
+   void addNewTextWidget(Offset position, int index) {
+    stackWidgets.add(
+      NewText(position, this, index),
+    );
+    notifyListeners();
+  }
+
+  void updateConstraints(BoxConstraints newConstraints)
+  {
+    constraints = newConstraints;
+    notifyListeners();
+  }
+
+  Positioned NewText(Offset position, AppDataProvider appdataProvider, int index) {
+    return Positioned(
+            left: position.dx,
+            top: position.dy,
+            child: GestureDetector(
+              onTap: () {
+                appdataProvider.setIndx(index);
+                // appdataProvider.set_selected(true);
+                // print(appdataProvider.getIdx);
+                print("yeah text 1 ");
+              },
+              child: (appdataProvider.getIdx == index)? Draggable(
+                feedback: Material(
+                  color: Colors.transparent,
+                  child: Text(
+                    appdataProvider.getText(index),
+                    style: TextStyle(
+                      fontSize: appdataProvider.getFontSize(index).toDouble(),
+                      color: appdataProvider.getIdx == index?Colors.black:appdataProvider.getFontColor(index),
+                      fontFamily: appdataProvider.getFontFamily(index),
+                    ),
+                  ),
+                ),
+                childWhenDragging: Container(),
+                onDragEnd: (details) {
+                  position = Offset(
+                    details.offset.dx.clamp(0, constraints!.maxWidth - 75),
+                    details.offset.dy.clamp(0, constraints!.maxHeight - 75),
+                  );
+                  appdataProvider.set_position(position,index);
+                  appdataProvider.addTask(
+                      appdataProvider.getText(index),
+                      appdataProvider.getFontFamily(index),
+                      appdataProvider.getFontColor(index),
+                      
+                      appdataProvider.getFontSize(index),
+                      position,
+                      index
+                  );
+                },
+                child: Text(
+                  appdataProvider.getText(index),
+                  style: TextStyle(
+                    fontSize: appdataProvider.getFontSize(index).toDouble(),
+                    color: appdataProvider.getIdx == index? Colors.black:appdataProvider.getFontColor(index),
+                    fontFamily: appdataProvider.getFontFamily(index),
+                  ),
+                ),
+              ): Text(
+                appdataProvider.getText(index),
+                style: TextStyle(
+                  fontSize: appdataProvider.getFontSize(index).toDouble(),
+                  color: appdataProvider.getFontColor(index),
+                  fontFamily: appdataProvider.getFontFamily(index),
+                ),
+              ),
+            ),
+          );
   }
 }
