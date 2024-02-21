@@ -34,6 +34,7 @@ class TaskStateHistory {
 
   TaskState? undo() {
     print(_history);
+    print("current index$_currentTaskStateIndex");
     if (_currentTaskStateIndex > 0) {
       _currentTaskStateIndex--;
 

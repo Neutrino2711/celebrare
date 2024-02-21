@@ -48,11 +48,33 @@ class Celebrare extends StatelessWidget {
                   taskState = appdataProvider.undo();
                   // print(taskState!.index);
                   // appdataProvider.selectedIndx = taskState!.index;
-                  appdataProvider.font_sizes[taskState!.index] = taskState!.fontSize;
+                  if(taskState == null){
+                    showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                      return AlertDialog(
+        content: Text("No more undo's"),
+        
+        actions: <Widget>[
+          TextButton(
+            child: Text('Close'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+                  }
+                  else{
+                    appdataProvider.selectedIndx = taskState!.index;
+                    appdataProvider.font_sizes[taskState!.index] = taskState!.fontSize;
                   appdataProvider.font_families[taskState!.index] = taskState!.fontFamily;
                   appdataProvider.font_colors[taskState!.index] = taskState!.color;
                   appdataProvider.positions[taskState!.index] = taskState!.position;
-                  appdataProvider.texts[taskState!.index] = taskState!.text;
+                  appdataProvider.texts[taskState!.index] = taskState!.text;}
+                  
                   
                 },
                 child: Text('Undo'),
@@ -60,12 +82,33 @@ class Celebrare extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   taskState = appdataProvider.redo();
-                 appdataProvider.selectedIndx = taskState!.index;
+                  if(taskState == null)
+                  {
+                     showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                      return AlertDialog(
+        content: Text("No more redo's possible"),
+        
+        actions: <Widget>[
+          TextButton(
+            child: Text('Close'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+                  }
+                  else { appdataProvider.selectedIndx = taskState!.index;
                   appdataProvider.font_sizes[appdataProvider.selectedIndx] = taskState!.fontSize;
                   appdataProvider.font_families[appdataProvider.selectedIndx] = taskState!.fontFamily;
                   appdataProvider.font_colors[appdataProvider.selectedIndx] = taskState!.color;
                   appdataProvider.positions[appdataProvider.selectedIndx] = taskState!.position;
-                  appdataProvider.texts[appdataProvider.selectedIndx] = taskState!.text;
+                  appdataProvider.texts[appdataProvider.selectedIndx] = taskState!.text;}
+                
                 },
                 child: Text('Redo'),
               ),
@@ -89,11 +132,11 @@ class Celebrare extends StatelessWidget {
                   onChanged: (val) {
                     appdataProvider.set_font_size(val!,0);
                     appdataProvider.addTask(
-                        appdataProvider.getText(0),
-                        appdataProvider.getFontFamily(0),
-                        appdataProvider.getFontColor(0),
-                        appdataProvider.getFontSize(0),
-                        appdataProvider.get_position(0),
+                        appdataProvider.getText(appdataProvider.getIdx),
+                        appdataProvider.getFontFamily(appdataProvider.getIdx),
+                        appdataProvider.getFontColor(appdataProvider.getIdx),
+                        appdataProvider.getFontSize(appdataProvider.getIdx),
+                        appdataProvider.get_position(appdataProvider.getIdx),
                         appdataProvider.getIdx,);
                   }),
               Spacer(),
@@ -108,11 +151,11 @@ class Celebrare extends StatelessWidget {
                   onChanged: (val) {
                     appdataProvider.set_font_family(val!,0);
                     appdataProvider.addTask(
-                         appdataProvider.getText(0),
-                        appdataProvider.getFontFamily(0),
-                        appdataProvider.getFontColor(0),
-                        appdataProvider.getFontSize(0),
-                        appdataProvider.get_position(0),
+                         appdataProvider.getText(appdataProvider.getIdx),
+                        appdataProvider.getFontFamily(appdataProvider.getIdx),
+                        appdataProvider.getFontColor(appdataProvider.getIdx),
+                        appdataProvider.getFontSize(appdataProvider.getIdx),
+                        appdataProvider.get_position(appdataProvider.getIdx),
                         appdataProvider.getIdx,);
                   }),
             ],
@@ -151,39 +194,39 @@ class Celebrare extends StatelessWidget {
               ),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //   children: [
+              // ElevatedButton(
+              //   onPressed: () {
+              //     appdataProvider.add_text(textcontroller.text,0);
+              //     appdataProvider.addTask(
+              //          appdataProvider.getText(appdataProvider.getIdx),
+              //           appdataProvider.getFontFamily(appdataProvider.getIdx),
+              //           appdataProvider.getFontColor(appdataProvider.getIdx),
+              //           appdataProvider.getFontSize(appdataProvider.getIdx),
+              //           appdataProvider.get_position(appdataProvider.getIdx),
+              //         appdataProvider.getIdx,
+              //         );
+              //   },
+              //   child: const Text('Add Text'),
+              // ),
               ElevatedButton(
                 onPressed: () {
-                  appdataProvider.add_text(textcontroller.text,0);
+                  appdataProvider.replace_text(textcontroller.text);
                   appdataProvider.addTask(
-                       appdataProvider.getText(0),
-                        appdataProvider.getFontFamily(0),
-                        appdataProvider.getFontColor(0),
-                        appdataProvider.getFontSize(0),
-                        appdataProvider.get_position(0),
+                      appdataProvider.getText(appdataProvider.getIdx),
+                        appdataProvider.getFontFamily(appdataProvider.getIdx),
+                        appdataProvider.getFontColor(appdataProvider.getIdx),
+                        appdataProvider.getFontSize(appdataProvider.getIdx),
+                        appdataProvider.get_position(appdataProvider.getIdx),
                       appdataProvider.getIdx,
                       );
                 },
                 child: const Text('Add Text'),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  appdataProvider.replace_text(textcontroller.text);
-                  appdataProvider.addTask(
-                      appdataProvider.getText(0),
-                        appdataProvider.getFontFamily(0),
-                        appdataProvider.getFontColor(0),
-                        appdataProvider.getFontSize(0),
-                        appdataProvider.get_position(0),
-                      appdataProvider.getIdx,
-                      );
-                },
-                child: const Text('Replace Text'),
-              ),
-            ],
-          )
+          //   ],
+          // )
         ],
       ),
     );

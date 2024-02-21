@@ -10,15 +10,40 @@ class AppDataProvider extends ChangeNotifier {
  
   List<String> font_families = ["Roboto","Roboto","Roboto","Roboto","Roboto","Roboto"];
  
-  List<Color> font_colors = [Colors.red,Colors.red,Colors.red,Colors.red,Colors.red,Colors.red];
+  List<Color> font_colors = [Colors.grey,Colors.grey,Colors.grey,Colors.grey,Colors.grey,Colors.grey];
   
-  List<Offset> positions = [Offset(0, 0),Offset(50,50),Offset(50,0),Offset(50,70),Offset(0,0),Offset(70,70)];
+  List<Offset> positions = [Offset(100, 100),Offset(200,100),Offset(100, 100),Offset(200,100),Offset(100, 100),Offset(200,100)];
  
   List<String> texts = ["Text1","Text2","Text3","Text4","Text5","Text6"];
+  
+
   int selectedIndx = 0;
+  
+  List<bool> _initialized = [false,false,false,false,false,false];
+
+  // ... rest of your code
+
+  AppDataProvider() {
+    if (!_initialized[0]) {
+      initializeStates(0);
+      _initialized[0] = true;
+    }
+  }
+
+  void initializeStates(int index) {
+    
+      addTask(texts[index], font_families[index], font_colors[index], font_sizes[index], positions[index], index);
+    
+  }
 
 
   int get getIdx => selectedIndx;
+  
+  
+  
+
+
+
 
   int getFontSize(int index){
  
@@ -66,6 +91,10 @@ return positions[index];
 
   void setIndx(int index){
     selectedIndx = index;
+    if (!_initialized[index]) {
+      initializeStates(index);
+      _initialized[index] = true;
+    }
     notifyListeners();
   }
   
@@ -110,6 +139,7 @@ return positions[index];
 
   void addTask(
       String text, String fontFamily, Color color, int fontSize, Offset pos,int index) {
+        
     history.addTaskState(TaskState(
         text: text,
         color: color,
@@ -125,9 +155,7 @@ return positions[index];
   TaskState? undo() {
     final undoneState = history.undo();
     if (undoneState != null) {
-      print("yes");
-      print(undoneState.position);
-      print(undoneState.fontSize);
+      
       notifyListeners();
     }
     return undoneState;
