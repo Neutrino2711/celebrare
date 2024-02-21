@@ -1,139 +1,108 @@
+import 'package:celebrare_assignment/providers/textstate.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/appdata_provider.dart';
 
 class DraggablePage extends StatelessWidget {
-   DraggablePage({
+  const DraggablePage({
     super.key,
-    required this.appdataProvider,
-    required this.position1,
-    required this.position2,
-    required this.index1,
-    required this.index2,
+    required this.pageNumber,
   });
 
-  final AppDataProvider appdataProvider;
-  final  Offset position1;
-  final  Offset position2;
-  final int index1;
-  final int index2;
-
-  void dragEnd(DraggableDetails details, BoxConstraints constraints) {
-       var loc = Offset( 
-                      details.offset.dx.clamp(0, constraints.maxWidth - 75),
-                      details.offset.dy.clamp(0, constraints.maxHeight - 75),
-                    );
-                    appdataProvider.set_position(loc,index2);
-                     appdataProvider.addTask(
-                        appdataProvider.getText(index2),
-                        appdataProvider.getFontFamily(index2),
-                        appdataProvider.getFontColor(index2),
-                        
-                        appdataProvider.getFontSize(index2),
-                        position2,
-                        index2,
-                    );
-  }
-  
-
+  final int pageNumber;
 
   @override
   Widget build(BuildContext context) {
+    final appdataProvider = Provider.of<AppDataProvider>(context);
+    final pageTexts = appdataProvider.getPageText(pageNumber);
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        WidgetsBinding.instance!.addPostFrameCallback((_) {
-            appdataProvider.updateConstraints(constraints);
-          });
+        // WidgetsBinding.instance!.addPostFrameCallback((_) {
+        //     appdataProvider.updateConstraints(constraints);
+        //   });
         return Stack(
-          children: appdataProvider.stackWidgets,
-        //   children: <Widget>[
-        //     Positioned.fill(
-        //     child: Image.asset(
-        //       'assets/background.jpg', 
-        //       fit: BoxFit.cover,
-        //     ),
-        //   ),
-        //   TextWidget(appdataProvider: appdataProvider, position1: position1, position2: position2, index1: index1, index2: index2, constraints: constraints, dragEnd: dragEnd)
-        //     // NewText(position1, appdataProvider, index1, constraints),
-        //     // NewText(position2, appdataProvider, index2, constraints),
-        //     // NewText(Offset(200,200), appdataProvider, index2, constraints),
-            
-        //   ],
+          children: <Widget>[
+            Positioned.fill(
+              child: Image.asset(
+                'assets/background.jpg',
+                fit: BoxFit.cover,
+              ),
+            ),
+            ...pageTexts.map(
+              (e) => SingleTextWidget(e: e, constraints: constraints),
+            ),
+          ],
         );
       },
     );
   }
 }
 
-
-
-class TextWidget extends StatelessWidget {
-  const TextWidget({
-    
-    required this.appdataProvider,
-    required this.position1,
-    required this.position2,
-    required this.index1,
-    required this.index2,
+class SingleTextWidget extends StatelessWidget {
+  const SingleTextWidget({
+    super.key,
+    required this.e,
     required this.constraints,
-    required this.dragEnd,
-    });
-
-  final AppDataProvider appdataProvider;
-  final   Offset position1;
-  final   Offset position2;
-  final int index1;
-  final int index2;
+  });
+  final TextModel e;
   final BoxConstraints constraints;
-  final void Function(DraggableDetails,BoxConstraints) dragEnd;
 
   @override
   Widget build(BuildContext context) {
-    return
-     Positioned(
-              left: position2.dx,
-              top: position2.dy,
-              child: GestureDetector(
-               onTap: () {
-                  appdataProvider.setIndx(index2);
-                  // appdataProvider.set_selected(true);
-
-                  print(appdataProvider.getIdx);
-                  print("yeah text 2");
-                },
-                child: appdataProvider.getIdx == index2 ? Draggable(
-                  feedback: Material(
-                    color: Colors.transparent,
-                    child: Text(
-                      appdataProvider.getText(index2),
-                      style: TextStyle(
-                        fontSize: appdataProvider.getFontSize(index2).toDouble(),
-                        color: appdataProvider.getIdx == index2? Colors.black: appdataProvider.getFontColor(index2),
-                        fontFamily: appdataProvider.getFontFamily(index2),
-                      ),
-                    ),
-                  ),
-                  childWhenDragging: Container(),
-                  onDragEnd: (details) => dragEnd(details, constraints),
-                  
+    final appdataProvider = Provider.of<AppDataProvider>(context);
+    return Positioned(
+      left: e.position.dx,
+      top: e.position.dy,
+      child: GestureDetector(
+        onTap: () {
+          appdataProvider.setSelectedId(e.id);
+        },
+        child: e.id == appdataProvider.selectedId
+            ? Draggable(
+                feedback: Material(
+                  color: Colors.transparent,
                   child: Text(
-                    appdataProvider.getText(index2),
+                    e.content,
                     style: TextStyle(
-                      fontSize: appdataProvider.getFontSize(index2).toDouble(),
-                      color: appdataProvider.getIdx == index2? Colors.black:appdataProvider.getFontColor(index2),
-                      fontFamily: appdataProvider.getFontFamily(index2),
+                      fontSize: e.fontSize.toDouble(),
+                      color: e.id == appdataProvider.selectedId
+                          ? Colors.black
+                          : e.fontColor,
+                      fontFamily: e.fontFamily,
                     ),
                   ),
-                ):Text(
-                    appdataProvider.getText(index2),
-                    style: TextStyle(
-                      fontSize: appdataProvider.getFontSize(index2).toDouble(),
-                      color: appdataProvider.getFontColor(index2),
-                      fontFamily: appdataProvider.getFontFamily(index2),
-                    ),
+                ),
+                childWhenDragging: Container(),
+                onDragEnd: (details) {
+                  var loc = Offset(
+                    details.offset.dx.clamp(0, constraints.maxWidth - 75),
+                    details.offset.dy.clamp(0, constraints.maxHeight - 75),
+                  );
+                  TextModel textModel =
+                      appdataProvider.getText(appdataProvider.selectedId);
+                  appdataProvider.updateText(
+                      textModel.id, textModel.copyWith(position: loc));
+                },
+                child: Text(
+                  e.content,
+                  style: TextStyle(
+                    fontSize: e.fontSize.toDouble(),
+                    color: e.id == appdataProvider.selectedId
+                        ? Colors.black
+                        : e.fontColor,
+                    fontFamily: e.fontFamily,
                   ),
+                ),
+              )
+            : Text(
+                e.content,
+                style: TextStyle(
+                  fontSize: e.fontSize.toDouble(),
+                  color: e.fontColor,
+                  fontFamily: e.fontFamily,
+                ),
               ),
-            );
-     
-     }
+      ),
+    );
+  }
 }
