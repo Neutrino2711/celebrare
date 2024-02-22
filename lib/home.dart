@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:celebrare_assignment/providers/page_provider.dart';
+import 'package:celebrare_assignment/reorder_page.dart';
 import 'package:flutter/material.dart';
 
 import 'drag.dart';
@@ -35,11 +37,15 @@ class Celebrare extends StatelessWidget {
 
     String dropdownVal = fontSizes.first.toString();
     final appdataProvider = Provider.of<AppDataProvider>(context);
+    final pageProvider = Provider.of<PageProvider>(context);
 
     return Scaffold(
       body: Column(
         children: [
-          Expanded(child: MyHomePage()),
+          Expanded(
+              child: MyHomePage(
+            pageProvider: pageProvider,
+          )),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -220,7 +226,7 @@ class Celebrare extends StatelessWidget {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  appdataProvider.addText(0);
+                  appdataProvider.addText(pageProvider.currentPage);
                   // appdataProvider.addTextModel(TextModel(
                   //     fontSize: 30,
                   //     fontFamily: 'Roboto',
@@ -246,6 +252,12 @@ class Celebrare extends StatelessWidget {
                 },
                 child: const Text('L Add Text'),
               ),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ReorderPage()));
+                  },
+                  child: Text('Reorder Pages')),
               ElevatedButton(
                 onPressed: () {
                   appdataProvider.addText(1);

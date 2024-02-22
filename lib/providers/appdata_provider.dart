@@ -73,7 +73,9 @@ class AppDataProvider extends ChangeNotifier {
       if (changes[changeIndex].created) {
         text.removeLast();
       } else {
-        text[changes[changeIndex].oldModel!.id] = changes[changeIndex].oldModel!;}
+        text[changes[changeIndex].oldModel!.id] =
+            changes[changeIndex].oldModel!;
+      }
       changeIndex--;
       notifyListeners();
     }
@@ -85,9 +87,48 @@ class AppDataProvider extends ChangeNotifier {
       if (changes[changeIndex].created) {
         text.add(changes[changeIndex].newModel!);
       } else {
-        text[changes[changeIndex].newModel!.id] = changes[changeIndex].newModel!;
+        text[changes[changeIndex].newModel!.id] =
+            changes[changeIndex].newModel!;
       }
       notifyListeners();
     }
+  }
+
+  void reorderPages(List<int> newOrder) {
+    List<TextModel> newText = [];
+    for (int i = 0; i < newOrder.length; i++) {
+      text.forEach((element) {
+        if (element.pageNumber == newOrder[i]) {
+          newText.add(element.copyWith(pageNumber: i));
+        }
+      });
+    }
+    text.clear();
+    text.addAll(newText);
+    // modifyChangesOnPageReorder(newOrder);
+    notifyListeners();
+  }
+
+  void modifyChangesOnPageReorder(List<int> newOrder) {
+    List<Changes> newChanges = [...changes];
+    for (int i = 0; i < newOrder.length; i++) {
+      for (final (index, element) in changes.indexed) {
+        if (element.oldModel != null) {
+          if (element.oldModel!.pageNumber == newOrder[i]) {
+            newChanges[index].oldModel =
+                newChanges[index].oldModel!.copyWith(pageNumber: i);
+          }
+        }
+        if (element.newModel != null) {
+          if (element.newModel!.pageNumber == newOrder[i]) {
+            newChanges[index].newModel =
+                newChanges[index].newModel!.copyWith(pageNumber: i);
+          }
+        }
+      }
+    }
+    changes.clear();
+    changes.addAll(newChanges);
+    notifyListeners();
   }
 }
