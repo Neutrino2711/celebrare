@@ -29,7 +29,8 @@ class AppDataProvider extends ChangeNotifier {
     changeIndex++;
     changes.add(Changes(
       created: true,
-      oldModel: text.last,
+      oldModel: null,
+      newModel: text.last,
     ));
     // changes.add(Changes(created: true, oldModel: text.last));
     notifyListeners();
@@ -60,6 +61,7 @@ class AppDataProvider extends ChangeNotifier {
     changes.add(Changes(
       created: false,
       oldModel: text[id],
+      newModel: textModel,
     ));
     text[id] = textModel;
     notifyListeners();
@@ -71,8 +73,7 @@ class AppDataProvider extends ChangeNotifier {
       if (changes[changeIndex].created) {
         text.removeLast();
       } else {
-        text[changes[changeIndex].oldModel.id] = changes[changeIndex].oldModel;
-      }
+        text[changes[changeIndex].oldModel!.id] = changes[changeIndex].oldModel!;}
       changeIndex--;
       notifyListeners();
     }
@@ -82,9 +83,9 @@ class AppDataProvider extends ChangeNotifier {
     if (changeIndex < changes.length - 1) {
       changeIndex++;
       if (changes[changeIndex].created) {
-        text.add(changes[changeIndex].oldModel);
+        text.add(changes[changeIndex].newModel!);
       } else {
-        text[changes[changeIndex].oldModel.id] = changes[changeIndex].oldModel;
+        text[changes[changeIndex].newModel!.id] = changes[changeIndex].newModel!;
       }
       notifyListeners();
     }
